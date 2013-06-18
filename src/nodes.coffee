@@ -1006,6 +1006,8 @@ exports.Class = class Class extends Base
             assign.error 'cannot define more than one constructor in a class'
           if func.bound
             assign.error 'cannot define a constructor as a bound function'
+          if func.generator
+            assign.error 'cannot define a constructor as a generator'
           if func instanceof Code
             assign = @ctor = func
           else
@@ -1270,10 +1272,11 @@ exports.Assign = class Assign extends Base
 # has no *children* -- they're within the inner scope.
 exports.Code = class Code extends Base
   constructor: (params, body, tag) ->
-    @params  = params or []
-    @body    = body or new Block
-    @bound   = tag is 'boundfunc'
-    @context = '_this' if @bound
+    @params    = params or []
+    @body      = body or new Block
+    @bound     = tag is 'boundfunc'
+    @generator = tag is 'genfunc'
+    @context   = '_this' if @bound
 
   children: ['params', 'body']
 
@@ -1333,6 +1336,7 @@ exports.Code = class Code extends Base
         o.scope.parent.assign '_this', 'this'
     idt   = o.indent
     code  = 'function'
+    code  += '*' if @generator
     code  += ' ' + @name if @ctor
     code  += '('
     answer = [@makeCode(code)]

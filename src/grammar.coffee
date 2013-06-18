@@ -193,6 +193,7 @@ grammar =
   # functions, and `=>` is for functions bound to the current value of *this*.
   FuncGlyph: [
     o '->',                                     -> 'func'
+    o '*>',                                     -> 'genfunc'
     o '=>',                                     -> 'boundfunc'
   ]
 
